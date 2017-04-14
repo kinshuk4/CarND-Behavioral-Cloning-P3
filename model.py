@@ -9,27 +9,13 @@ from sklearn.model_selection import train_test_split
 
 import matplotlib.pyplot as plt
 import numpy as np
-
-
-
-
+import data_util as du
 
 
 def main():
     data_subfolder_ids = [2]
-    all_lines = read_all_logs(data_subfolder_ids)
-
-    print("Total Samples: " + str(len(all_lines)))
-
-    images = []
-    measurements = []
-    print("Readying the data set..........................\n")
-    for line in all_lines:
-        # print(line)
-        img_center = cv2.imread(line[0])
-        images.append(img_center)
-        measurements.append(float(line[3]))
-
+    images, measurements = du.get_images_measurements(data_subfolder_ids)
+    print("Image Samples: " + str(len(images)))
     print("Getting the model..........................\n")
     # model, epochs = ml.choose_model("sequential")
     model, epochs = ml.choose_model("lenet")
@@ -39,7 +25,7 @@ def main():
     y_train = np.array(measurements)
 
     import model_util as mu
-    mu.compile_model(X_train, epochs, model, y_train)
+    mu.compile_model(model, X_train, y_train, epochs)
 
 
 

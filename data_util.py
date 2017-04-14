@@ -3,6 +3,39 @@ import csv
 import cv2
 import numpy as np
 
+def flip_image(image, measurement):
+    image_flipped = np.fliplr(image)
+    measurement_flipped = -measurement
+    return image_flipped, measurement_flipped
+
+
+def augment_data(images, measurements):
+    augmented_images = []
+    augmented_measurements = []
+
+    for image, measurement in zip(images, measurements):
+        augmented_images.append(image)
+        augmented_measurements.append(measurement)
+
+        image_flipped, measurement_flipped = flip_image(image, measurement)
+        augmented_images.append(image_flipped)
+        augmented_measurements.append(measurement_flipped)
+    return augmented_images, augmented_measurements
+
+def get_images_measurements(data_subfolder_ids):
+    all_lines = read_all_logs(data_subfolder_ids)
+    print("Total Samples: " + str(len(all_lines)))
+    images = []
+    measurements = []
+    print("Readying the data set..........................\n")
+    for line in all_lines:
+        # print(line)
+        img_center = cv2.imread(line[0])
+        images.append(img_center)
+        measurements.append(float(line[3]))
+
+    augmented_images, augmented_measurements = augment_data(images, measurements)
+    return augmented_images, augmented_measurements
 
 
 def read_all_logs(numSubFolder):
