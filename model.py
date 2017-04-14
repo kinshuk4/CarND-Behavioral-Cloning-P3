@@ -30,10 +30,13 @@ def main():
     y_train = np.array(measurements)
 
     from keras.models import Sequential, Model
-    from keras.layers import Flatten, Dense
+    from keras.layers import Flatten, Dense, Lambda
 
     print("Training the model..........................\n")
     model = Sequential()
+    # https://classroom.udacity.com/nanodegrees/nd013/parts/fbf77062-5703-404e-b60c-95b78b2f3f9e/modules/6df7ae49-c61c-4bb2-a23e-6527e69209ec/lessons/46a70500-493e-4057-a78e-b3075933709d/concepts/b3883cd8-f915-46e1-968a-e935323e749b
+    #In this project, a lambda layer is a convenient way to parallelize image normalization. The lambda layer will also ensure that the model will normalize input images when making predictions in drive.py.
+    model.add(Lambda(lambda x: (x / 255.0) - 0.5, input_shape=(160,320,3)))
     model.add(Flatten(input_shape=(160, 320, 3)))
     model.add(Dense(1))
 
