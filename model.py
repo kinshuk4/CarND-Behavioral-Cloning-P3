@@ -13,23 +13,32 @@ import numpy as np
 def main():
     numSubFolder=2
     allLines = readAllLogs(numSubFolder)
+    
     print("Total Samples: "+ str(len(allLines)))
 
-    augmented_images = []
-    augmented_measurements = []
+    images = []
+    measurements = []
+    print("Readying the data set..........................\n")
+    for line in allLines:
+        img_center = cv2.imread(line[0])
+        images.append(img_center)
+        measurements.append(float(line[3]))
 
-    X_train = np.array(augmented_images)
-    y_train = np.array(augmented_measurements)
+    X_train = np.array(images)
+    y_train = np.array(measurements)
 
     from keras.models import Sequential, Model
     from keras.layers import Flatten, Dense
 
+    print("Training the model..........................\n")
     model = Sequential()
     model.add(Flatten(input_shape=(160, 320, 3)))
     model.add(Dense(1))
 
+    print("Compiling the model..........................\n")
     model.compile(loss='mse', optimizer='adam')
     model.fit(X_train, y_train, validation_split=0.2, shuffle=True, nb_epoch=7)
+    print("Saving the model..........................\n")
     model.save('model.h5')
 
 
@@ -66,7 +75,7 @@ def readLogs(csvFile, imageFolder):
             line[0]=getCurrFilePath(line[0],imageFolder)
             line[1]=getCurrFilePath(line[1],imageFolder)
             line[2]=getCurrFilePath(line[2],imageFolder)
-            print(line)
+            
             lines.append(line)
     return lines
 
