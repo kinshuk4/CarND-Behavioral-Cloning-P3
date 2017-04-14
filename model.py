@@ -11,7 +11,7 @@ import numpy as np
 
 
 def main():
-    numSubFolder=2
+    numSubFolder=[2]
     allLines = readAllLogs(numSubFolder)
     
     print("Total Samples: "+ str(len(allLines)))
@@ -20,10 +20,12 @@ def main():
     measurements = []
     print("Readying the data set..........................\n")
     for line in allLines:
+        #print(line)
         img_center = cv2.imread(line[0])
         images.append(img_center)
         measurements.append(float(line[3]))
 
+    # Convertint to numpy format as Keras requires
     X_train = np.array(images)
     y_train = np.array(measurements)
 
@@ -43,16 +45,11 @@ def main():
 
 
 
-
-
-
-
 def readAllLogs(numSubFolder):
     dataFolder="../DataSets/carnd-behavioral-cloning-p3-data/data"
     allLines=[]
     
-    for i in range(1, numSubFolder):
-        print(dataFolder)
+    for i in numSubFolder:
         datapath=dataFolder+str(i)
         csvFile = datapath+"/driving_log.csv"
         imageFolder=datapath+"/IMG/"
@@ -67,15 +64,14 @@ def readLogs(csvFile, imageFolder):
     lines=[]
     with open(csvFile) as csvfile:
         reader = csv.reader(csvfile)
+        next(reader, None)  # skip the headers
         for line in reader:
-            print(line)
             #Pointing the image path to the right path.
             # Sample line: ['/Users/kchandra/Desktop/images/IMG/center_2017_04_10_00_22_50_654.jpg', '/Users/kchandra/Desktop/images/IMG/left_2017_04_10_00_22_50_654.jpg', '/Users/kchandra/Desktop/images/IMG/right_2017_04_10_00_22_50_654.jpg', '0', '0', '0', '23.57149']
             # line[0],line[1] and line[2] are center, left and right view of images
-            line[0]=getCurrFilePath(line[0],imageFolder)
-            line[1]=getCurrFilePath(line[1],imageFolder)
-            line[2]=getCurrFilePath(line[2],imageFolder)
-            
+            line[0]=getCurrFilePath(line[0], imageFolder)
+            line[1]=getCurrFilePath(line[1], imageFolder)
+            line[2]=getCurrFilePath(line[2], imageFolder)
             lines.append(line)
     return lines
 
