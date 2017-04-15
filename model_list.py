@@ -54,7 +54,6 @@ So, convolutional networks will help
 '''
 def get_lenet_model():
     model = get_normalized_cropped_model()
-
     model.add(Convolution2D(6, 5, 5, activation="relu"))
     model.add(MaxPooling2D())
     model.add(Convolution2D(6, 5, 5, activation="relu"))

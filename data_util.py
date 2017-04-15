@@ -2,6 +2,7 @@ import os
 import csv
 import cv2
 import numpy as np
+import sklearn
 
 def flip_image(image, measurement):
     image_flipped = np.fliplr(image)
@@ -23,6 +24,26 @@ def augment_data(images, measurements):
     return augmented_images, augmented_measurements
 
 
+def process_line(line, images, measurements):
+    img_center = cv2.imread(line[0])
+    img_left = cv2.imread(line[1])
+    img_right = cv2.imread(line[2])
+
+    images.append(img_center)
+    images.append(img_left)
+    images.append(img_right)
+
+    steering_center = float(line[3])
+
+    # create adjusted steering measurements for the side camera images
+    correction = 0.2 # this is a parameter to tune
+    steering_left = steering_center + correction
+    steering_right = steering_center - correction
+
+    measurements.append(steering_center)
+    measurements.append(steering_left)
+    measurements.append(steering_right)
+
 def get_images_measurements(data_subfolder_ids):
     all_lines = read_all_logs(data_subfolder_ids)
     print("Total Samples: " + str(len(all_lines)))
@@ -30,45 +51,27 @@ def get_images_measurements(data_subfolder_ids):
     measurements = []
     print("Readying the data set..........................\n")
     for line in all_lines:
-        # print(line)
-        img_center = cv2.imread(line[0])
-        img_left = cv2.imread(line[1])
-        img_right = cv2.imread(line[2])
-
-        images.append(img_center)
-        images.append(img_left)
-        images.append(img_right)
-
-        steering_center = float(line[3])
-
-        # create adjusted steering measurements for the side camera images
-        correction = 0.2 # this is a parameter to tune
-        steering_left = steering_center + correction
-        steering_right = steering_center - correction
-
-        measurements.append(steering_center)
-        measurements.append(steering_left)
-        measurements.append(steering_right)
+        process_line(line, images, measurements)
 
     augmented_images, augmented_measurements = augment_data(images, measurements)
     return augmented_images, augmented_measurements
 
 
-def read_all_logs(numSubFolder):
+def read_all_logs(sub_folder_ids):
     dataFolder = "../DataSets/carnd-behavioral-cloning-p3-data/data"
     allLines = []
-    for i in numSubFolder:
+    for i in sub_folder_ids:
         datapath = dataFolder + str(i)
         print("Reading the data folder: "+datapath)
-        csvFile = datapath + "/driving_log.csv"
-        imageFolder = datapath + "/IMG/"
-        lines = read_logs(csvFile, imageFolder)
+        csv_file = datapath + "/driving_log.csv"
+        image_folder = datapath + "/IMG/"
+        lines = read_logs(csv_file, image_folder)
         allLines.extend(lines)
     return allLines
 
 
 '''
-data directory has a date folder and then the csv file and IMG folder.
+   data directory has a date folder and then the csv file and IMG folder.
 '''
 def read_logs(csvFile, imageFolder):
     lines = []
@@ -89,3 +92,24 @@ def read_logs(csvFile, imageFolder):
 def get_current_file_path(source_path, current_path):
     filename = source_path.split('/')[-1]
     return current_path + filename
+
+
+def generator(samples, batch_size=32):
+    num_samples = len(samples)
+    # Loop forever so the generator never terminates
+    while 1:
+        sklearn.utils.shuffle(samples)
+        for offset in range(0, num_samples, batch_size):
+            batch_samples = samples[offset:offset+batch_size]
+
+            images = []
+            measurements = []
+            for batch_sample in batch_samples:
+                process_line(batch_sample, images, measurements)
+
+            augmented_images, augmented_measurements = augment_data(images, measurements)
+            # trim image to only see section with road
+            # Convert array to numpy format as Keras requires
+            X_train = np.array(augmented_images)
+            y_train = np.array(augmented_measurements)
+            yield sklearn.utils.shuffle(X_train, y_train)
