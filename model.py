@@ -18,7 +18,8 @@ def main():
     print("Image Samples: " + str(len(images)))
     print("Getting the model..........................\n")
     # model, epochs = ml.choose_model("simple")
-    model, epochs = ml.choose_model("lenet")
+    # model, epochs = ml.choose_model("lenet")
+    model, epochs = ml.choose_model("nvidia")
 
     # Convertint to numpy format as Keras requires
     X_train = np.array(images)

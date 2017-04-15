@@ -11,11 +11,14 @@ def choose_model(model_type):
     # choose model
     epochs = 0
     if (model_type == 'simple'):
-        model = get_sequential_model()
+        model = get_simple_model()
         epochs = 7
     elif (model_type == 'lenet'):
         model = get_lenet_model()
         epochs = 5
+    elif (model_type == 'nvidia'):
+        model = get_nvidia_model()
+        epochs = 3
 
     return model, epochs
 
