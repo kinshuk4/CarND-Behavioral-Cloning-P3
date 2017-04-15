@@ -16,10 +16,11 @@ def main():
     data_subfolder_ids = [2]
     images, measurements = du.get_images_measurements(data_subfolder_ids)
     print("Image Samples: " + str(len(images)))
-    print("Getting the model..........................\n")
-    # model, epochs = ml.choose_model("simple")
-    # model, epochs = ml.choose_model("lenet")
-    model, epochs = ml.choose_model("nvidia")
+    # model_type="simple"
+    # model_type="lenet"
+    model_type="nvidia"
+    print("Getting the model.........................."+model_type + "\n")
+    model, epochs = ml.choose_model(model_type)
 
     # Convertint to numpy format as Keras requires
     X_train = np.array(images)
