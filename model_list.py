@@ -25,7 +25,7 @@ The lambda layer will also ensure that the model will normalize input images whe
 More: https://classroom.udacity.com/nanodegrees/nd013/parts/fbf77062-5703-404e-b60c-95b78b2f3f9e/modules/6df7ae49-c61c-4bb2-a23e-6527e69209ec/lessons/46a70500-493e-4057-a78e-b3075933709d/concepts/b3883cd8-f915-46e1-968a-e935323e749b
 '''
 def get_sequential_model():
-    ### INITIAL
+    # SEQUENTIAL SIMPLE
     model = Sequential()
     model.add(Lambda(lambda x: x / 255.0 - 0.5, input_shape=(160, 320, 3)))
     model.add(Flatten())
@@ -40,7 +40,14 @@ So, convolutional networks will help
 def get_lenet_model():
     model = Sequential()
     model.add(Lambda(lambda x: x / 255.0 - 0.5, input_shape=(160, 320, 3)))
-    model.add(Cropping2D(cropping=((70, 25), (0, 0))))
+    # The example below crops:
+    #
+    # 50 rows pixels from the top of the image
+    # 20 rows pixels from the bottom of the image
+    # 0 columns of pixels from the left of the image
+    # 0 columns of pixels from the right of the image
+    model.add(Cropping2D(cropping=((50,20), (0,0)), input_shape=(160,320,3)))
+
     model.add(Convolution2D(6, 5, 5, activation="relu"))
     model.add(MaxPooling2D())
     model.add(Convolution2D(6, 5, 5, activation="relu"))
