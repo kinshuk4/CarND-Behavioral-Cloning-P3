@@ -28,8 +28,5 @@ def main():
     mu.compile_model(model, X_train, y_train, epochs)
 
 
-
-
-
 if __name__ == "__main__":
     main()
