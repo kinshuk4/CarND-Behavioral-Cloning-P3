@@ -22,6 +22,7 @@ def augment_data(images, measurements):
         augmented_measurements.append(measurement_flipped)
     return augmented_images, augmented_measurements
 
+
 def get_images_measurements(data_subfolder_ids):
     all_lines = read_all_logs(data_subfolder_ids)
     print("Total Samples: " + str(len(all_lines)))
@@ -31,8 +32,23 @@ def get_images_measurements(data_subfolder_ids):
     for line in all_lines:
         # print(line)
         img_center = cv2.imread(line[0])
+        img_left = cv2.imread(line[1])
+        img_right = cv2.imread(line[2])
+
         images.append(img_center)
-        measurements.append(float(line[3]))
+        images.append(img_left)
+        images.append(img_right)
+
+        steering_center = float(line[3])
+
+        # create adjusted steering measurements for the side camera images
+        correction = 0.2 # this is a parameter to tune
+        steering_left = steering_center + correction
+        steering_right = steering_center - correction
+
+        measurements.append(steering_center)
+        measurements.append(steering_left)
+        measurements.append(steering_right)
 
     augmented_images, augmented_measurements = augment_data(images, measurements)
     return augmented_images, augmented_measurements
