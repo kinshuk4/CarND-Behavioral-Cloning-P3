@@ -17,7 +17,7 @@ def main():
     images, measurements = du.get_images_measurements(data_subfolder_ids)
     print("Image Samples: " + str(len(images)))
     print("Getting the model..........................\n")
-    # model, epochs = ml.choose_model("sequential")
+    # model, epochs = ml.choose_model("simple")
     model, epochs = ml.choose_model("lenet")
 
     # Convertint to numpy format as Keras requires

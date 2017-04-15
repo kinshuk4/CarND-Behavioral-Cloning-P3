@@ -59,6 +59,7 @@ def read_all_logs(numSubFolder):
     allLines = []
     for i in numSubFolder:
         datapath = dataFolder + str(i)
+        print("Reading the data folder: "+datapath)
         csvFile = datapath + "/driving_log.csv"
         imageFolder = datapath + "/IMG/"
         lines = read_logs(csvFile, imageFolder)
