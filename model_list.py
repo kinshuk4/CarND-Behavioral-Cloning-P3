@@ -19,6 +19,10 @@ def choose_model(model_type):
     elif (model_type == 'nvidia'):
         model = get_nvidia_model()
         epochs = 3
+    elif (model_type == 'comma_ai'):
+        model = get_comma_ai_model()
+        epochs = 3
+
 
     return model, epochs
 
@@ -81,5 +85,26 @@ def get_nvidia_model():
     model.add(Dense(100))
     model.add(Dense(50))
     model.add(Dense(10))
+    model.add(Dense(1))
+    return model
+
+'''
+COMMA.AI MODEL
+'''
+def get_comma_ai_model():
+    model = Sequential()
+    model.add(Lambda(lambda x: x / 255.0 - 0.5, input_shape=(160, 320, 3)))
+    model.add(Cropping2D(cropping=((70, 25), (0, 0))))
+    model.add(Convolution2D(16, 8, 8, subsample=(4, 4), border_mode="same"))
+    model.add(ELU())
+    model.add(Convolution2D(32, 5, 5, subsample=(2, 2), border_mode="same"))
+    model.add(ELU())
+    model.add(Convolution2D(64, 5, 5, subsample=(2, 2), border_mode="same"))
+    model.add(Flatten())
+    model.add(Dropout(.2))
+    model.add(ELU())
+    model.add(Dense(512))
+    model.add(Dropout(.5))
+    model.add(ELU())
     model.add(Dense(1))
     return model
